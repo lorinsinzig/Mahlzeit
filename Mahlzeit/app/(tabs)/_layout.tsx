@@ -39,7 +39,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="add"
         options={{
           title: 'Erstellen',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
