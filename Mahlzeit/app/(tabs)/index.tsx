@@ -11,7 +11,7 @@ export default function Index() {
         db.execSync(`
             CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, password TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS rezepte (id INTEGER PRIMARY KEY NOT NULL, title CHAR(300) NOT NULL,
-            rezept CHAR(1000) NOT NULL, anweisungen CHAR(1000) NOT NULL, dauer INTEGER NOT NULL, ersteller_id INTEGER NOT NULL);
+            rezept CHAR(1000) NOT NULL, anweisungen CHAR(1000) NOT NULL, dauer INTEGER NOT NULL, ersteller INTEGER NOT NULL);
         `)
 
   const [data, setData] = useState<{ id: number; title: string }[]>([]);

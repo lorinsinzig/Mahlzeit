@@ -4,5 +4,5 @@ export default interface Rezepte {
   rezept: string,
   anweisungen: string,
   dauer: number,
-  ersteller_id: number
+  ersteller: number
 }

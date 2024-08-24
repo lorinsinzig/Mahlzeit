@@ -1,12 +1,20 @@
 import { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { Text } from '@/components/Themed';
+import * as SQLite from 'expo-sqlite';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleCreateAndInsert = async () => {
+    const db = SQLite.openDatabaseSync('mahlzeit', {});
+    console.log(name)
+
+    db.execSync(`INSERT INTO user(name, password) VALUES ('${name}', '${password}');`)
+  };
 
   const togglePasswordVisibility = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -19,8 +27,8 @@ export default function LoginScreen() {
       <TextInput
         style={styles.input}
         placeholder="Nutzername"
-        value={username}
-        onChangeText={setUsername}
+        value={name}
+        onChangeText={setName}
       />
       
       <View style={styles.passwordContainer}>
@@ -36,9 +44,9 @@ export default function LoginScreen() {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Anmelden</Text>
-      </TouchableOpacity>
+        <Pressable style={styles.button} onPress={handleCreateAndInsert} >
+          <Text>Anmelden</Text>
+        </Pressable>
     </View>
   );
 }
