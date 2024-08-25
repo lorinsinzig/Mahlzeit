@@ -6,6 +6,60 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { globalUserId, setGlobalUserId } from '@/components/GlobalUser';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  input: {
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    marginBottom: 10,
+    height: 50,
+  },
+  passwordContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 10,
+    height: 50,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+  },
+  eyeIcon: {
+    paddingHorizontal: 10,
+    position: 'absolute',
+    right: 5,
+  },
+  button: {
+    backgroundColor: 'orange',
+    padding: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    height: 50,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+});
+
 export default function LoginScreen() {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [name, setName] = useState('');
@@ -54,57 +108,8 @@ export default function LoginScreen() {
       </View>
 
         <Pressable style={styles.button} onPress={handleCreateAndInsert} >
-          <Text>Anmelden</Text>
+        <Text style={styles.buttonText}>Anmelden</Text>
         </Pressable>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 30,
-  },
-  input: {
-    width: '100%',
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 15,
-  },
-  passwordContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 15,
-  },
-  passwordInput: {
-    flex: 1,
-    padding: 15,
-  },
-  eyeIcon: {
-    paddingHorizontal: 10,
-  },
-  button: {
-    backgroundColor: 'orange',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    width: '100%',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-});
+};

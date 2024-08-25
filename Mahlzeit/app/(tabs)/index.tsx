@@ -4,7 +4,19 @@ import { useFocusEffect } from 'expo-router';
 import * as SQLite from 'expo-sqlite';
 
 import Thumbnail from '@/components/Thumbnail';
-import styles from '@/components/StyleSheet';
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f5f5f5',
+  },
+  searchBar: {
+    height: 50,
+    backgroundColor: '#ffffff',
+    padding: 15,
+    borderRadius: 15,
+    margin: 10,
+  },
+});
 
 export default function Index() {
 

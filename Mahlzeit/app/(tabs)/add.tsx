@@ -12,23 +12,21 @@ const theme = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    margin: 10,
   },
   input: {
-    borderWidth: 1,
-    borderColor: theme.secondaryColor,
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 16,
-    fontSize: 16,
-    color: theme.secondaryColor,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 10,
+    height: 50,
   },
   button: {
-    backgroundColor: theme.primaryColor,
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: 'orange',
+    borderRadius: 15,
+    height: 50,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#fff',
