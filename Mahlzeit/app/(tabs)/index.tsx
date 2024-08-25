@@ -4,15 +4,17 @@ import { useFocusEffect } from 'expo-router';
 import * as SQLite from 'expo-sqlite';
 
 import Thumbnail from '@/components/Thumbnail';
+import styles from '@/components/StyleSheet';
 
 export default function Index() {
 
-  const db = SQLite.openDatabaseSync('lmao')
-        db.execSync(`
-            CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, password TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS rezepte (id INTEGER PRIMARY KEY NOT NULL, title CHAR(300) NOT NULL,
-            rezept CHAR(1000) NOT NULL, anweisungen CHAR(1000) NOT NULL, dauer INTEGER NOT NULL, ersteller INTEGER NOT NULL);
-        `)
+  const db = SQLite.openDatabaseSync('mahlzeit')
+
+  db.execSync(`
+    CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, password TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS rezepte (id INTEGER PRIMARY KEY NOT NULL, title CHAR(300) NOT NULL,
+    rezept CHAR(1000) NOT NULL, anweisungen CHAR(1000) NOT NULL, dauer INTEGER NOT NULL, ersteller INTEGER NOT NULL);
+  `)
 
   const [data, setData] = useState<{ id: number; title: string }[]>([]);
   const [filteredData, setFilteredData] = useState<{ id: number; title: string }[]>([]);
@@ -22,7 +24,7 @@ export default function Index() {
     return db.getAllSync(`
       SELECT id, title FROM rezepte;
     `) as { id: number; title: string }[];
-  };
+  };  
 
   const arraysEqual = (a: number[], b: number[]) => {
     if (a === b) return true;
@@ -54,11 +56,11 @@ export default function Index() {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     const lowercasedQuery = query.toLowerCase();
-    const newFilteredData = data.filter(item =>
-      item.title.toLowerCase().includes(lowercasedQuery)
-    );
+    const newFilteredData = data.filter(item => {
+      return item.title.toLowerCase().includes(lowercasedQuery);
+    });
     setFilteredData(newFilteredData);
-  };
+  };  
 
   return (
     <ScrollView style={styles.container}>
@@ -76,16 +78,3 @@ export default function Index() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f5f5f5',
-  },
-  searchBar: {
-    height: 40,
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    margin: 10,
-  },
-});

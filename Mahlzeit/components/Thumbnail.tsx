@@ -10,7 +10,7 @@ const Thumbnail = ({ id }: { id: number }) => {
   const [rezept, setRezept] = useState<Rezepte | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const db = SQLite.openDatabaseSync('lmao');
+  const db = SQLite.openDatabaseSync('mahlzeit');
 
   useEffect(() => {
     // Fetch the recipe data
@@ -21,11 +21,13 @@ const Thumbnail = ({ id }: { id: number }) => {
     const rezept = a.length > 0 ? a[0] : null;
     setRezept(rezept);
 
+    console.log('rezept:', rezept);
+
     // Fetch the user data only if rezept exists
-    if (rezept && rezept.ersteller_id !== null) {
+    if (rezept && rezept.ersteller !== null) {
       const userResult: User[] = db.getAllSync(`
         SELECT * FROM user WHERE id = ?;
-      `, [rezept.ersteller_id]);
+      `, [rezept.ersteller]);
 
       const user = userResult.length > 0 ? userResult[0] : null;
       setUser(user);

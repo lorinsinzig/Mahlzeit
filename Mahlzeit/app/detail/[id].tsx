@@ -11,7 +11,7 @@ const Details = () => {
   useEffect(() => {
     const fetchRecipe = () => {
       if (id && !isNaN(Number(id))) {
-        const db = SQLite.openDatabaseSync('lmao');
+        const db = SQLite.openDatabaseSync('mahlzeit');
         const numericId = Number(id); // Convert id to a number
 
         const result: Rezepte[] = db.getAllSync(`

@@ -4,6 +4,8 @@ import { Text } from '@/components/Themed';
 import * as SQLite from 'expo-sqlite';
 import { Ionicons } from '@expo/vector-icons';
 
+import { globalUserId, setGlobalUserId } from '@/components/GlobalUser';
+
 export default function LoginScreen() {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [name, setName] = useState('');
@@ -11,9 +13,16 @@ export default function LoginScreen() {
 
   const handleCreateAndInsert = async () => {
     const db = SQLite.openDatabaseSync('mahlzeit', {});
-    console.log(name)
 
     db.execSync(`INSERT INTO user(name, password) VALUES ('${name}', '${password}');`)
+
+    const result: { id: number }[] = db.getAllSync(`SELECT last_insert_rowid() as id;`);
+
+    const UserId = result[0].id;
+
+    console.log('Inserted:', UserId, name, password);
+    
+    setGlobalUserId(UserId.toString());
   };
 
   const togglePasswordVisibility = () => {
