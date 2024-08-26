@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
-import { TextInput, View, StyleSheet, Pressable, Text, Image } from 'react-native';
+import { TextInput, View, StyleSheet, Pressable, Text, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { globalUserId } from '@/components/GlobalUser';
-
-const theme = {
-  primaryColor: '#007AFF',
-  secondaryColor: '#333',
-};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: 10,
+    marginTop: 0,
   },
   input: {
     backgroundColor: '#ffffff',
@@ -29,12 +27,37 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 20,
+  },
+  imageButton: {
+    backgroundColor: 'gray',
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    height: 250,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 10,
+    marginRight: -10,
+    marginLeft: -10,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  imageButtonImage: {
+    width: '100%',
+    height: '100%',
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+    position: 'absolute',
+  },
+  icon: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    color: '#fff',
+    fontSize: 24,
   },
   image: {
     width: 100,
@@ -51,56 +74,54 @@ export default function AddScreen() {
   const [anweisungen, setAnweisungen] = useState('');
   const [dauer, setDauer] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  
+  const navigation = useNavigation();
 
-  const handleCreateAndInsert = () => {
+  const handleCreate = () => {
+    if (!title || !rezept || !anweisungen || !dauer || !imageUri) {
+      Alert.alert('Fehler', 'Bitte füllen Sie alle Felder aus und fügen Sie ein Bild hinzu.');
+      return;
+    }
+
     const db = SQLite.openDatabaseSync('mahlzeit');
-
     const ersteller = globalUserId ? globalUserId : '1';
 
-    db.execSync(`
-      INSERT INTO rezepte (title, rezept, anweisungen, dauer, ersteller, imageUri) 
-      VALUES ('${title.replace(/'/g, "''")}', '${rezept.replace(/'/g, "''")}', 
-      '${anweisungen.replace(/'/g, "''")}', '${dauer.replace(/'/g, "''")}', 
-      '${ersteller.replace(/'/g, "''")}', '${imageUri.replace(/'/g, "''")}');
-    `);
-
-    console.log('Inserted:', title, rezept, anweisungen, dauer, ersteller, imageUri);
-  };
-
-  const handleRead = () => {
-    const db = SQLite.openDatabaseSync('mahlzeit');
-
     try {
-      const rows = db.getAllSync(`
-        SELECT * FROM rezepte;
+      db.execSync(`
+        INSERT INTO rezepte (title, rezept, anweisungen, dauer, ersteller, imageUri) 
+        VALUES ('${title.replace(/'/g, "''")}', '${rezept.replace(/'/g, "''")}', 
+        '${anweisungen.replace(/'/g, "''")}', '${dauer.replace(/'/g, "''")}', 
+        '${ersteller.replace(/'/g, "''")}', '${imageUri.replace(/'/g, "''")}');
       `);
 
-      for (const row of rows) {
-        console.log(row.id, row.title, row.rezept, row.anweisungen, row.dauer, row.ersteller, row.imageUri);
-      }
+      setTitle('');
+      setRezept('');
+      setAnweisungen('');
+      setDauer('');
+      setImageUri(null);
+
+      navigation.navigate('index');
+
     } catch (error) {
-      console.error('Read failed:', error);
+      console.error('Insert failed:', error);
     }
   };
 
   const pickImage = async () => {
-    // Request permission to access camera
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (!permissionResult.granted) {
       alert('Permission to access camera is required!');
       return;
     }
 
-    // Open the camera
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
-      aspect: [1, 1], // Aspect ratio for cropping
+      aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.canceled) {
-      // Crop the image to 1:1 ratio
       const manipResult = await ImageManipulator.manipulateAsync(
         result.assets[0].uri,
         [{ resize: { width: 500 } }, { crop: { originX: 0, originY: 0, width: 500, height: 500 } }],
@@ -113,17 +134,21 @@ export default function AddScreen() {
 
   return (
     <View style={styles.container}>
+      <Pressable onPress={pickImage} style={styles.imageButton}>
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.imageButtonImage} />
+        ) : (
+          <>
+            <Text style={styles.buttonText}>Take Photo</Text>
+          </>
+        )}
+        <Icon name="camera-alt" style={styles.icon} />
+      </Pressable>
       <TextInput
         style={styles.input}
         placeholder="Name des Gerichts"
         value={title}
         onChangeText={setTitle}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="1 Stunde"
-        value={dauer}
-        onChangeText={setDauer}
       />
       <TextInput
         style={styles.input}
@@ -137,18 +162,16 @@ export default function AddScreen() {
         value={anweisungen}
         onChangeText={setAnweisungen}
       />
+      <TextInput
+        style={styles.input}
+        value={dauer}
+        placeholder='Dauer in Stunden'
+        onChangeText={setDauer}
+        keyboardType="numeric"
+      />
 
-      <Pressable onPress={pickImage} style={styles.button}>
-        <Text style={styles.buttonText}>Take Photo</Text>
-      </Pressable>
-
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-
-      <Pressable onPress={handleCreateAndInsert} style={styles.button}>
-        <Text style={styles.buttonText}>CREATE</Text>
-      </Pressable>
-      <Pressable onPress={handleRead} style={styles.button}>
-        <Text style={styles.buttonText}>READ</Text>
+      <Pressable onPress={handleCreate} style={styles.button}> 
+        <Text style={styles.buttonText}>Erstellen</Text>
       </Pressable>
     </View>
   );

@@ -26,7 +26,7 @@ export default function Index() {
     CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, password TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS rezepte (id INTEGER PRIMARY KEY NOT NULL, title CHAR(300) NOT NULL,
     rezept CHAR(1000) NOT NULL, anweisungen CHAR(1000) NOT NULL, dauer INTEGER NOT NULL, ersteller INTEGER NOT NULL, 
-    imageUri CHAR(300) NOT NULL);
+    imageUri CHAR(300));
   `)
 
   const [data, setData] = useState<{ id: number; title: string }[]>([]);
@@ -35,7 +35,7 @@ export default function Index() {
 
   const getRecipes = () => {
     return db.getAllSync(`
-      SELECT id, title FROM rezepte;
+      SELECT id, title FROM rezepte ORDER BY id DESC;
     `) as { id: number; title: string }[];
   };  
 

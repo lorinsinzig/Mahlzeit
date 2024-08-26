@@ -1,48 +1,58 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, StatusBar } from 'react-native';
-
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; // Import Material Icons
+import { Tabs } from 'expo-router';
+import { StatusBar } from 'react-native';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+function MaterialCommunityIcon(props: {
+  name: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <MaterialCommunityIcons size={36} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function MaterialIcon(props: {
+  name: React.ComponentProps<typeof MaterialIcons>['name'];
+  color: string;
+}) {
+  return <MaterialIcons size={36} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   // Calculate the header height as 20 pixels higher than the status bar height
-  const headerHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 60;
+  const headerHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 60;
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: 'orange',
+        tabBarStyle: {
+          height: 80,
+          backgroundColor: 'white',
+          marginRight: 10,
+          marginLeft: 10,
+          borderRadius: 15,
+        },
         headerShown: useClientOnlyValue(false, true),
         headerStyle: {
           height: headerHeight,
         },
-        headerTitleStyle: {display: 'none'},
+        headerTitleStyle: { 
+          display: 'none'
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcon name="home-variant" color={color} />, // Use Material Icons name
         }}
       />
       <Tabs.Screen
         name="add"
         options={{
           title: 'Erstellen',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialIcon name="add" color={color} />, // Use Material Icons name
         }}
       />
     </Tabs>
