@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Button, Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Alert, Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { Text } from '@/components/Themed';
 import * as SQLite from 'expo-sqlite';
 import { Ionicons } from '@expo/vector-icons';
-
+import { useNavigation } from '@react-navigation/native'; // Ensure you have react-navigation installed
+import { router } from 'expo-router';
 import { globalUserId, setGlobalUserId } from '@/components/GlobalUser';
 
 const styles = StyleSheet.create({
@@ -51,12 +52,16 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',
+    justifyContent: 'center',
     height: 50,
     width: '100%',
+    marginTop: 20,
   },
   buttonText: {
-    color: '#ffffff',
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
+    position: 'absolute',
   },
 });
 
@@ -65,18 +70,44 @@ export default function LoginScreen() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleCreateAndInsert = async () => {
-    const db = SQLite.openDatabaseSync('mahlzeit', {});
+  const navigation = useNavigation();
 
-    db.execSync(`INSERT INTO user(name, password) VALUES ('${name}', '${password}');`)
+  useEffect(() => {
+    const db = SQLite.openDatabaseSync('mahlzeit');
 
-    const result: { id: number }[] = db.getAllSync(`SELECT last_insert_rowid() as id;`);
+    try {
+      db.execSync(`
+        CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, password TEXT NOT NULL);
+        INSERT OR IGNORE INTO user (id, name, password) VALUES (1, 'Admin', 'admin');
+        INSERT OR IGNORE INTO user (name, password) VALUES ('Ivo', 'ivo');
+      `);
+    } catch (error) {
+      console.error('Database initialization error:', error);
+    }
+  }, []);
 
-    const UserId = result[0].id;
+  const handleSignIn = () => {
+    const db = SQLite.openDatabaseSync('mahlzeit');
 
-    console.log('Inserted:', UserId, name, password);
-    
-    setGlobalUserId(UserId.toString());
+    // Query to check if user exists
+    const query = `
+      SELECT id FROM user WHERE name = ? AND password = ?
+    `;
+
+    try {
+      const result: { id: number }[] = db.getAllSync(query, [name, password]);
+
+      if (result.length > 0) {
+        const userId = result[0].id;
+        setGlobalUserId(userId.toString());
+        router.push('./(tabs)'); // Navigate to the index screen
+      } else {
+        Alert.alert('Fehler', 'Ungültiger Benutzername oder Passwort');
+      }
+    } catch (error) {
+      console.error('Database query error:', error);
+      Alert.alert('Fehler', 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -107,9 +138,9 @@ export default function LoginScreen() {
         </TouchableOpacity>
       </View>
 
-        <Pressable style={styles.button} onPress={handleCreateAndInsert} >
+      <Pressable style={styles.button} onPress={handleSignIn}>
         <Text style={styles.buttonText}>Anmelden</Text>
-        </Pressable>
+      </Pressable>
     </View>
   );
-};
+}
