@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { Link } from 'expo-router';
 
@@ -10,7 +10,7 @@ const Thumbnail = ({ id }: { id: number }) => {
   const [rezept, setRezept] = useState<Rezepte | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const db = SQLite.openDatabaseSync('lmao');
+  const db = SQLite.openDatabaseSync('mahlzeit');
 
   useEffect(() => {
     // Fetch the recipe data
@@ -21,11 +21,13 @@ const Thumbnail = ({ id }: { id: number }) => {
     const rezept = a.length > 0 ? a[0] : null;
     setRezept(rezept);
 
+    console.log('rezept:', rezept);
+
     // Fetch the user data only if rezept exists
-    if (rezept && rezept.ersteller_id !== null) {
+    if (rezept && rezept.ersteller !== null) {
       const userResult: User[] = db.getAllSync(`
         SELECT * FROM user WHERE id = ?;
-      `, [rezept.ersteller_id]);
+      `, [rezept.ersteller]);
 
       const user = userResult.length > 0 ? userResult[0] : null;
       setUser(user);
@@ -49,11 +51,14 @@ const Thumbnail = ({ id }: { id: number }) => {
       asChild
     >
       <Pressable style={styles.container}>
-        <Text style={styles.title}>{rezept.title}</Text>
-        <Text style={styles.description}>{rezept.rezept}</Text>
-        <Text style={styles.description}>{rezept.anweisungen}</Text>
-        <Text style={styles.description}>Dauer: {rezept.dauer} hours</Text>
-        <Text style={styles.description}>Ersteller: {user ? user.name : 'Unknown'}</Text>
+        <Image source={{ uri: rezept.imageUri }} style={styles.thumbnail} />
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{rezept.title}</Text>
+          <Text style={styles.description}>{rezept.rezept}</Text>
+          <Text style={styles.description}>{rezept.anweisungen}</Text>
+          <Text style={styles.description}>Dauer: {rezept.dauer} hours</Text>
+          <Text style={styles.description}>Ersteller: {user ? user.name : 'Unknown'}</Text>
+        </View>
       </Pressable>
     </Link>
   );
@@ -61,11 +66,21 @@ const Thumbnail = ({ id }: { id: number }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row', // Align items horizontally
     padding: 10,
     margin: 10,
     marginTop: 0,
     backgroundColor: '#ffffff',
-    borderRadius: 7,
+    borderRadius: 15,
+  },
+  thumbnail: {
+    width: 90,
+    height: 90,
+    borderRadius: 10,
+    marginRight: 10, // Space between image and text
+  },
+  textContainer: {
+    flex: 1, // Take up the remaining space
   },
   title: {
     fontSize: 18,

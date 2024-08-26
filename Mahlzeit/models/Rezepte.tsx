@@ -5,4 +5,5 @@ export default interface Rezepte {
   anweisungen: string,
   dauer: number,
   ersteller: number
+  imageUri: string
 }
