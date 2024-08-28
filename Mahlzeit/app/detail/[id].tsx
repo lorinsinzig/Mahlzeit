@@ -5,7 +5,7 @@ import * as SQLite from 'expo-sqlite';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Rezepte from '@/models/Rezepte';
-import { globalUserId } from '@/components/GlobalUser'; // Ensure this is correctly imported
+import { globalUserId } from '@/components/GlobalUser';
 
 const styles = StyleSheet.create({
   container: {
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
-    marginTop: 15
   },
   title: {
     fontSize: 24,
@@ -38,7 +37,18 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   saveButton: {
-    marginTop: 20
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+    padding: 10,
+    backgroundColor: 'orange',
+    borderRadius: 5,
+  },
+  saveText: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold'
   },
   deleteButton: {
     flexDirection: 'row',
@@ -152,28 +162,27 @@ const Details = () => {
         />
       )}
       <View style={styles.content}>
-        <Text style={styles.label}>Title:</Text>
         <TextInput
           style={styles.title}
           value={title}
           onChangeText={setTitle}
-          editable={isOwner} // Only allow editing if the user is the owner
+          editable={isOwner}
         />
         
-        <Text style={styles.label}>Recipe:</Text>
+        <Text style={styles.label}>Beschreibung:</Text>
         <TextInput
           style={styles.description}
           value={rezept}
           onChangeText={setRezept}
-          editable={isOwner} // Only allow editing if the user is the owner
+          editable={isOwner}
         />
         
-        <Text style={styles.label}>Instructions:</Text>
+        <Text style={styles.label}>Anweisungen:</Text>
         <TextInput
           style={styles.description}
           value={anweisungen}
           onChangeText={setAnweisungen}
-          editable={isOwner} // Only allow editing if the user is the owner
+          editable={isOwner}
         />
 
         <Text style={styles.label}>Duration:</Text>
@@ -187,17 +196,16 @@ const Details = () => {
 
         {isOwner && (
           <>
-            <Button title="Speichern" onPress={saveChanges} style={styles.saveButton} />
+            <Pressable style={styles.saveButton} onPress={saveChanges}>
+              <Text style={styles.saveText}>Änderungen speichern</Text>
+            </Pressable>
+            <Pressable style={styles.deleteButton} onPress={deleteRecipe}>
+              <Icon name="delete" style={styles.deleteIcon} />
+              <Text style={styles.deleteText}>Rezept löschen</Text>
+            </Pressable>
           </>
         )}
       </View>
-
-      {isOwner && (
-        <Pressable style={styles.deleteButton} onPress={deleteRecipe}>
-          <Icon name="delete" style={styles.deleteIcon} />
-          <Text style={styles.deleteText}>Rezept löschen</Text>
-        </Pressable>
-      )}
     </ScrollView>
   );
 };
