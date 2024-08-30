@@ -84,8 +84,6 @@ export default function LoginScreen() {
   }, []);
 
   const handleSignIn = () => {
-
-    // Query to check if user exists
     const query = `
       SELECT id FROM user WHERE name = ? AND password = ?
     `;
@@ -129,7 +127,11 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry={secureTextEntry}
         />
-        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+        <TouchableOpacity
+          onPress={togglePasswordVisibility}
+          style={styles.eyeIcon}
+          testID="toggle-password-visibility" // Add testID here
+        >
           <Ionicons name={secureTextEntry ? "eye-off" : "eye"} size={24} color="gray" />
         </TouchableOpacity>
       </View>
