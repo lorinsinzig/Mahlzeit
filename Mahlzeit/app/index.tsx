@@ -3,9 +3,8 @@ import { Alert, Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 
 import { Text } from '@/components/Themed';
 import * as SQLite from 'expo-sqlite';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // Ensure you have react-navigation installed
 import { router } from 'expo-router';
-import { globalUserId, setGlobalUserId } from '@/components/GlobalUser';
+import { setGlobalUserId } from '@/components/GlobalUser';
 
 const styles = StyleSheet.create({
   container: {
@@ -70,11 +69,9 @@ export default function LoginScreen() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigation = useNavigation();
+  const db = SQLite.openDatabaseSync('mahlzeit');
 
   useEffect(() => {
-    const db = SQLite.openDatabaseSync('mahlzeit');
-
     try {
       db.execSync(`
         CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, password TEXT NOT NULL);
@@ -87,9 +84,6 @@ export default function LoginScreen() {
   }, []);
 
   const handleSignIn = () => {
-    const db = SQLite.openDatabaseSync('mahlzeit');
-
-    // Query to check if user exists
     const query = `
       SELECT id FROM user WHERE name = ? AND password = ?
     `;
@@ -100,7 +94,7 @@ export default function LoginScreen() {
       if (result.length > 0) {
         const userId = result[0].id;
         setGlobalUserId(userId.toString());
-        router.push('./(tabs)'); // Navigate to the index screen
+        router.push('./(tabs)');
       } else {
         Alert.alert('Fehler', 'Ungültiger Benutzername oder Passwort');
       }
@@ -133,7 +127,11 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry={secureTextEntry}
         />
-        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+        <TouchableOpacity
+          onPress={togglePasswordVisibility}
+          style={styles.eyeIcon}
+          testID="toggle-password-visibility" // Add testID here
+        >
           <Ionicons name={secureTextEntry ? "eye-off" : "eye"} size={24} color="gray" />
         </TouchableOpacity>
       </View>

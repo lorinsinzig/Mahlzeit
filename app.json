@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "2674160c-2f63-4414-93c9-6dacd1b7e576"
+      }
+    },
+    "android": {
+      "package": "com.lorinsinzig.mahlzeit"
+    }
+  }
+}

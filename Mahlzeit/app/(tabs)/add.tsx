@@ -21,6 +21,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 50,
   },
+  largeInput: {
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 10,
+    height: 100,
+  },
   button: {
     backgroundColor: 'orange',
     borderRadius: 15,
@@ -73,13 +80,13 @@ export default function AddScreen() {
   const [rezept, setRezept] = useState('');
   const [anweisungen, setAnweisungen] = useState('');
   const [dauer, setDauer] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>('http://example.com/default-image.png'); // Default image URI
   
   const navigation = useNavigation();
 
   const handleCreate = () => {
-    if (!title || !rezept || !anweisungen || !dauer || !imageUri) {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Felder aus und fügen Sie ein Bild hinzu.');
+    if (!title || !rezept || !anweisungen || !dauer) {
+      Alert.alert('Fehler', 'Bitte füllen Sie alle Felder aus.');
       return;
     }
 
@@ -151,16 +158,18 @@ export default function AddScreen() {
         onChangeText={setTitle}
       />
       <TextInput
-        style={styles.input}
+        style={styles.largeInput}
         placeholder="Beschreibung des Gerichts"
         value={rezept}
         onChangeText={setRezept}
+        multiline
       />
       <TextInput
-        style={styles.input}
+        style={styles.largeInput}
         placeholder="Anweisungen zum Zubereiten des Gerichts"
         value={anweisungen}
         onChangeText={setAnweisungen}
+        multiline
       />
       <TextInput
         style={styles.input}
