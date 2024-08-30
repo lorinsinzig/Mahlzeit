@@ -58,7 +58,7 @@ describe('<Details />', () => {
     jest.mock('@/components/GlobalUser', () => ({
       globalUserId: '1', // Simulate the owner
     }));
-
+    
     // Render the component
     render(<Details />);
 
