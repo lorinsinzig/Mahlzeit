@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   thumbnail: {
-    width: 90,
-    height: 90,
+    width: 100,
+    height: 100,
     borderRadius: 10,
     marginRight: 10, // Space between image and text
   },
